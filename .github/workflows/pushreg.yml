@@ -2,9 +2,9 @@ name: Deploy to registry
 
 on:
   push:
-    branches: [ "main", "example_feature", "example_second_feature"]
+    #branches: [ "main", "example_feature", "example_second_feature"]
   pull_request:
-    branches: [ "main" ]
+    #branches: [ "main" ]
 
 jobs:
 
