@@ -1,0 +1,26 @@
+name: Deploy to registry
+
+on:
+  push:
+    branches: [ "main", "example_feature"]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag nginx-to-prod:${GITHUB_REF##*/}
+
+    - name: Auth to Yandex container registry
+      run: docker login --username oauth --password ${{ secrets.YANDEX_TOKEN }} cr.yandex 
+
+    - name: Deploy to Yandex container registry
+      env:
+        REGISTRY_URL: cr.yandex/crpguq1at7hcp69b0d5o
+      run: docker tag nginx-to-prod:${GITHUB_REF##*/} ${REGISTRY_URL}/nginx-to-prod:${GITHUB_REF##*/} && docker push ${REGISTRY_URL}/nginx-to-prod:${GITHUB_REF##*/}
